@@ -37,6 +37,7 @@ package com.nageoffer.onecoupon.merchant.admin.mq.consumer;
 import com.alibaba.fastjson2.JSON;
 import com.nageoffer.onecoupon.merchant.admin.common.constant.MerchantAdminRocketMQConstant;
 import com.nageoffer.onecoupon.merchant.admin.dao.entity.CouponTaskDO;
+import com.nageoffer.onecoupon.merchant.admin.job.CouponTaskJobHandler;
 import com.nageoffer.onecoupon.merchant.admin.mq.base.MessageWrapper;
 import com.nageoffer.onecoupon.merchant.admin.mq.event.CouponTaskDelayEvent;
 import com.nageoffer.onecoupon.merchant.admin.service.CouponTaskService;
@@ -48,6 +49,7 @@ import org.springframework.stereotype.Component;
 
 /**
  * 优惠券推送延迟执行-变更记录发送状态消费者
+ * 后面为延时 XXL-Job 内容，已将逻辑迁移至 {@link CouponTaskJobHandler} 所以该 Topic 仅有消费者
  * <p>
  * 作者：马丁
  * 加项目群：早加入就是优势！500人内部项目群，分享的知识总有你需要的 <a href="https://t.zsxq.com/cw7b9" />
