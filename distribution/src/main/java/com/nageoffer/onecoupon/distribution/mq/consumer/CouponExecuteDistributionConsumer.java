@@ -282,7 +282,7 @@ public class CouponExecuteDistributionConsumer implements RocketMQListener<Messa
     }
 
     private Integer decrementCouponTemplateStock(CouponTemplateDistributionEvent event, Integer decrementStockSize) {
-        // 通过乐观机制自减优惠券库存记录
+        // 通过 MySQL 的行记录锁机制自减优惠券库存记录
         Long couponTemplateId = event.getCouponTemplateId();
         int decremented = couponTemplateMapper.decrementCouponTemplateStock(event.getShopNumber(), couponTemplateId, decrementStockSize);
 
