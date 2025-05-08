@@ -138,6 +138,9 @@ public class CouponTemplateServiceRemindImpl extends ServiceImpl<CouponTemplateR
                 .delayTime(DateUtil.offsetMinute(couponTemplate.getValidStartTime(), -requestParam.getRemindTime()).getTime())
                 .build();
         couponTemplateRemindDelayProducer.sendMessage(couponRemindDelayEvent);
+
+        // 删除用户预约提醒的缓存信息，通过更新数据库删除缓存策略保障数据库和缓存一致性
+        stringRedisTemplate.delete(String.format(USER_COUPON_TEMPLATE_REMIND_INFORMATION, UserContext.getUserId()));
     }
 
     @Override
