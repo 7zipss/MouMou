@@ -84,6 +84,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import static com.nageoffer.onecoupon.distribution.common.constant.EngineRedisConstant.USER_COUPON_TEMPLATE_LIMIT_KEY;
+
 /**
  * 优惠券执行分发到用户消费者
  * <p>
@@ -141,7 +143,7 @@ public class CouponExecuteDistributionConsumer implements RocketMQListener<Messa
                 for (String batchUserMapStr : batchUserMaps) {
                     Map<Object, Object> objectMap = MapUtil.builder()
                             .put("rowNum", JSON.parseObject(batchUserMapStr).get("rowNum"))
-                            .put("cause", "用户已领取该优惠券")
+                            .put("cause", "优惠券模板库存不足")
                             .build();
                     CouponTaskFailDO couponTaskFailDO = CouponTaskFailDO.builder()
                             .batchId(event.getCouponTaskBatchId())
@@ -223,8 +225,18 @@ public class CouponExecuteDistributionConsumer implements RocketMQListener<Messa
         String couponIdsJson = new ObjectMapper().writeValueAsString(couponIdList);
 
         // 调用 Lua 脚本时，传递参数
-        List<String> keys = Arrays.asList(EngineRedisConstant.USER_COUPON_TEMPLATE_LIST_KEY);
-        List<String> args = Arrays.asList(userIdsJson, couponIdsJson, String.valueOf(new Date().getTime()));
+        List<String> keys = Arrays.asList(
+                // 为什么要进行替换 %s 为空白字符串？因为后续代码需要使用 %s 进行动态值替换，但是当前 LUA 脚本中不需要，所以为了兼容后续不改动特此替换
+                StrUtil.replace(EngineRedisConstant.USER_COUPON_TEMPLATE_LIST_KEY, "%s", ""),
+                USER_COUPON_TEMPLATE_LIMIT_KEY,
+                String.valueOf(event.getCouponTemplateId())
+        );
+        List<String> args = Arrays.asList(
+                userIdsJson,
+                couponIdsJson,
+                String.valueOf(new Date().getTime()),
+                String.valueOf(event.getValidEndTime().getTime())
+        );
 
         // 获取 LUA 脚本，并保存到 Hutool 的单例管理容器，下次直接获取不需要加载
         DefaultRedisScript<Void> buildLuaScript = Singleton.get(BATCH_SAVE_USER_COUPON_LUA_PATH, () -> {
@@ -234,10 +246,26 @@ public class CouponExecuteDistributionConsumer implements RocketMQListener<Messa
             return redisScript;
         });
         stringRedisTemplate.execute(buildLuaScript, keys, args.toArray());
+
+        // 增加库存回滚方案，如果用户已经领取优惠券被校验，需要将 Redis 预扣减库存回滚
+        int originalUserCouponSize = batchUserMaps.size();
+        // 如果用户已领取被校验会从集合中删除
+        int availableUserCouponSize = userCouponDOList.size();
+        int rollbackStock = originalUserCouponSize - availableUserCouponSize;
+        if (rollbackStock > 0) {
+            // 回滚优惠券模板缓存库存数量
+            stringRedisTemplate.opsForHash().increment(
+                    String.format(EngineRedisConstant.COUPON_TEMPLATE_KEY, event.getCouponTemplateId()),
+                    "stock",
+                    rollbackStock
+            );
+
+            // 回滚优惠券模板数据库库存数量
+            couponTemplateMapper.incrementCouponTemplateStock(event.getShopNumber(), event.getCouponTemplateId(), rollbackStock);
+        }
     }
 
     private Integer decrementCouponTemplateStock(CouponTemplateDistributionEvent event, Integer decrementStockSize) {
-        // 通过乐观机制自减优惠券库存记录
         Long couponTemplateId = event.getCouponTemplateId();
         int decremented = couponTemplateMapper.decrementCouponTemplateStock(event.getShopNumber(), couponTemplateId, decrementStockSize);
 
