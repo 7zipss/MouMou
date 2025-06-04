@@ -118,7 +118,7 @@ public class ReadExcelDistributionListener extends AnalysisEventListener<CouponT
 
             // 添加到 t_coupon_task_fail 并标记错误原因，方便后续查看未成功发送的原因和记录
             Map<Object, Object> objectMap = MapUtil.builder()
-                    .put("rowNum", rowCount + 1)
+                    .put("rowNum", rowCount)
                     .put("cause", "优惠券模板无库存")
                     .build();
             CouponTaskFailDO couponTaskFailDO = CouponTaskFailDO.builder()
@@ -145,6 +145,7 @@ public class ReadExcelDistributionListener extends AnalysisEventListener<CouponT
                 .couponTaskId(couponTaskId)
                 .shopNumber(couponTaskDO.getShopNumber())
                 .couponTemplateId(couponTemplateDO.getId())
+                .validEndTime(couponTemplateDO.getValidEndTime())
                 .couponTaskBatchId(couponTaskDO.getBatchId())
                 .couponTemplateConsumeRule(couponTemplateDO.getConsumeRule())
                 .batchUserSetSize(batchUserSetSize)
@@ -164,6 +165,7 @@ public class ReadExcelDistributionListener extends AnalysisEventListener<CouponT
                 .distributionEndFlag(Boolean.TRUE) // 设置解析完成标识
                 .shopNumber(couponTaskDO.getShopNumber())
                 .couponTemplateId(couponTemplateDO.getId())
+                .validEndTime(couponTemplateDO.getValidEndTime())
                 .couponTemplateConsumeRule(couponTemplateDO.getConsumeRule())
                 .couponTaskBatchId(couponTaskDO.getBatchId())
                 .couponTaskId(couponTaskDO.getId())
