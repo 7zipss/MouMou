@@ -41,7 +41,6 @@ import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson2.JSON;
 import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
 import com.nageoffer.onecoupon.engine.common.constant.EngineRedisConstant;
-import com.nageoffer.onecoupon.engine.common.context.UserContext;
 import com.nageoffer.onecoupon.engine.common.enums.UserCouponStatusEnum;
 import com.nageoffer.onecoupon.engine.dao.entity.UserCouponDO;
 import com.nageoffer.onecoupon.engine.dao.mapper.CouponTemplateMapper;
@@ -122,7 +121,7 @@ public class UserCouponRedeemConsumer implements RocketMQListener<MessageWrapper
         userCouponMapper.insert(userCouponDO);
 
         // 添加用户领取优惠券模板缓存记录
-        String userCouponListCacheKey = String.format(EngineRedisConstant.USER_COUPON_TEMPLATE_LIST_KEY, UserContext.getUserId());
+        String userCouponListCacheKey = String.format(EngineRedisConstant.USER_COUPON_TEMPLATE_LIST_KEY, userId);
         String userCouponItemCacheKey = StrUtil.builder()
                 .append(requestParam.getCouponTemplateId())
                 .append("_")
