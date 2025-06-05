@@ -42,7 +42,6 @@ import com.alibaba.fastjson2.JSON;
 import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
 import com.nageoffer.onecoupon.engine.common.constant.EngineRedisConstant;
 import com.nageoffer.onecoupon.engine.common.constant.EngineRockerMQConstant;
-import com.nageoffer.onecoupon.engine.common.context.UserContext;
 import com.nageoffer.onecoupon.engine.common.enums.UserCouponStatusEnum;
 import com.nageoffer.onecoupon.engine.dao.entity.UserCouponDO;
 import com.nageoffer.onecoupon.engine.dao.mapper.CouponTemplateMapper;

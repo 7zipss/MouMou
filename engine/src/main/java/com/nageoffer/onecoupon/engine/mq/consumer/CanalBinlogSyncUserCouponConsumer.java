@@ -41,7 +41,6 @@ import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson2.JSON;
 import com.nageoffer.onecoupon.engine.common.constant.EngineRedisConstant;
 import com.nageoffer.onecoupon.engine.common.constant.EngineRockerMQConstant;
-import com.nageoffer.onecoupon.engine.common.context.UserContext;
 import com.nageoffer.onecoupon.engine.mq.event.CanalBinlogEvent;
 import com.nageoffer.onecoupon.engine.mq.event.UserCouponDelayCloseEvent;
 import com.nageoffer.onecoupon.engine.mq.producer.UserCouponDelayCloseProducer;
@@ -118,7 +117,7 @@ public class CanalBinlogSyncUserCouponConsumer implements RocketMQListener<Canal
             UserCouponDelayCloseEvent userCouponDelayCloseEvent = UserCouponDelayCloseEvent.builder()
                     .couponTemplateId(couponTemplateId)
                     .userCouponId(userCouponId)
-                    .userId(UserContext.getUserId())
+                    .userId(first.get("user_id").toString())
                     .delayTime(DateUtil.parse(first.get("valid_end_time").toString()).getTime())
                     .build();
             SendResult sendResult = couponDelayCloseProducer.sendMessage(userCouponDelayCloseEvent);
