@@ -35,6 +35,7 @@
 package com.nageoffer.onecoupon.engine.dao.sharding;
 
 import cn.hutool.core.lang.Singleton;
+import cn.hutool.core.util.StrUtil;
 import lombok.Getter;
 import org.apache.shardingsphere.infra.util.exception.ShardingSpherePreconditions;
 import org.apache.shardingsphere.sharding.api.sharding.standard.PreciseShardingValue;
@@ -88,8 +89,8 @@ public final class DBHashModShardingAlgorithm implements StandardShardingAlgorit
         this.props = props;
         shardingCount = getShardingCount(props);
         Object businessTag = props.get("business-tag");
-        if (Objects.nonNull(businessTag) && Objects.equals(businessTag.toString(), "coupon-template")) {
-            Singleton.put("coupon-template", this);
+        if (Objects.nonNull(businessTag) && StrUtil.isNotBlank(businessTag.toString())) {
+            Singleton.put(businessTag.toString(), this);
         }
     }
 
