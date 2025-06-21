@@ -15,7 +15,7 @@ for i, userId in ipairs(userIds) do
         redis.call('ZADD', key, currentTime, couponId)  -- 添加优惠券 ID 到 ZSet 中
 
         local limitKey = limitKeyPrefix .. userId .. '_' ..  couponTemplateId
-        redis.call('INCR', limitKey, 1)  -- 添加用户和优惠券的领取次数，方便后续对用户进行领取次数前置限制
+        redis.call('INCR', limitKey)  -- 添加用户和优惠券的领取次数，方便后续对用户进行领取次数前置限制
         redis.call('EXPIRE', limitKey, couponTemplateValidEndTime)  -- 添加用户优惠券模板限制领取 Key 过期时间
     end
 end
