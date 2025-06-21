@@ -82,7 +82,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.nio.file.Paths;
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -281,7 +283,13 @@ public class CouponExecuteDistributionConsumer implements RocketMQListener<Messa
                 userIdsJson,
                 couponIdsJson,
                 String.valueOf(new Date().getTime()),
-                String.valueOf(event.getValidEndTime().getTime())
+                String.valueOf(
+                        // 取当前时间距离优惠券模板结束时间之间的秒数作为 Limit Key 的过期时间
+                        Duration.between(
+                                LocalDateTime.now(),
+                                event.getValidEndTime().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime()
+                        ).getSeconds()
+                )
         );
 
         // 获取 LUA 脚本，并保存到 Hutool 的单例管理容器，下次直接获取不需要加载
