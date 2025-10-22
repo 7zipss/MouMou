@@ -66,7 +66,7 @@ public class CouponTemplateTest {
         }
         consumeRule.put("validityPeriod", 48); // 自领取优惠券后有效时间，单位小时
         CouponTemplateDO couponTemplateDO = CouponTemplateDO.builder()
-                .shopNumber(1810714735922956666L) // 店铺编号
+                .shopNumber(1810714735922956666L) // 店铺编号；如果想模拟插入到不同库，可换个 ID 写入：1810714735922956999L
                 .name("商品立减券") // 优惠券名称
                 .source(0) // 优惠券来源 0：店铺券 1：平台券
                 .target(target) // 优惠对象 0：商品专属 1：全店通用
