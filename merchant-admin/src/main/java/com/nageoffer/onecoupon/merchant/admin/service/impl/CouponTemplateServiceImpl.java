@@ -104,7 +104,7 @@ public class CouponTemplateServiceImpl extends ServiceImpl<CouponTemplateMapper,
             extra = "{{#requestParam.toString()}}"
     )
     @Override
-    public void createCouponTemplate(CouponTemplateSaveReqDTO requestParam) {
+    public String createCouponTemplate(CouponTemplateSaveReqDTO requestParam) {
         // 通过责任链验证请求参数是否正确
         merchantAdminChainContext.handler(MERCHANT_ADMIN_CREATE_COUPON_TEMPLATE_KEY.name(), requestParam);
 
@@ -158,7 +158,11 @@ public class CouponTemplateServiceImpl extends ServiceImpl<CouponTemplateMapper,
         couponTemplateDelayExecuteStatusProducer.sendMessage(templateDelayEvent);
 
         // 添加优惠券模板 ID 到布隆过滤器
-        couponTemplateQueryBloomFilter.add(String.valueOf(couponTemplateDO.getId()));
+        String strCouponTemplateId = String.valueOf(couponTemplateDO.getId());
+        couponTemplateQueryBloomFilter.add(strCouponTemplateId);
+
+        // 本次返回模板 ID 为空的，但是每次跨数据库查询表模板 ID 有点麻烦。为此修改接口语义，返回优惠券模板 ID
+        return strCouponTemplateId;
     }
 
     @Override

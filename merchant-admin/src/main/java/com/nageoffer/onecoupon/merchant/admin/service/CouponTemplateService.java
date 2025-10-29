@@ -56,8 +56,9 @@ public interface CouponTemplateService extends IService<CouponTemplateDO> {
      * 创建商家优惠券模板
      *
      * @param requestParam 请求参数
+     * @return 优惠券模板 ID
      */
-    void createCouponTemplate(CouponTemplateSaveReqDTO requestParam);
+    String createCouponTemplate(CouponTemplateSaveReqDTO requestParam);
 
     /**
      * 分页查询商家优惠券模板
