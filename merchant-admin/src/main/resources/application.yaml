@@ -39,9 +39,9 @@ spring:
     url: jdbc:shardingsphere:classpath:shardingsphere-config.yaml
   data:
     redis:
-      host: 127.0.0.1
+      host: 192.168.100.128
       port: 6379
-      password: 123456
+      password: 123321
 
 mybatis-plus:
   configuration:
@@ -77,7 +77,7 @@ xxl-job:
     port: 19999
 
 rocketmq:
-  name-server: 127.0.0.1:9876
+  name-server: 192.168.100.128:9876
   producer:
     group: oneCoupon_merchant-admin${unique-name:}-service_common-message-execute_pg
     send-message-timeout: 2000

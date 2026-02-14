@@ -39,13 +39,13 @@ spring:
     url: jdbc:shardingsphere:classpath:shardingsphere-config.yaml
   data:
     redis:
-      host: 127.0.0.1
+      host: 192.168.100.128
       port: 6379
-      password: 123456
+      password: 123321
   cloud:
     nacos:
       discovery:
-        server-addr: 127.0.0.1:8848
+        server-addr: 192.168.100.128:8848
         enabled: false
       password: nacos
       username: nacos
@@ -62,7 +62,7 @@ mybatis-plus:
 
 
 rocketmq:
-  name-server: 127.0.0.1:9876
+  name-server: 192.168.100.128:9876
   producer:
     group: oneCoupon_distribution${unique-name:}-service_common-message-execute_pg
     send-message-timeout: 2000
